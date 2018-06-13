@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.gameBox{
+				width: 1203px;
+				height: 600px;
+				border: 1px solid red;
+				/*margin: 0 auto;*/
+				position: relative;
+				float: left;
+				background: url(../img/t01cb91bb70a9512091.jpg);
+				background-size: 10px 10px;
+			}
+			.gameBox>h1{
+				position: fixed;
+				left: 35%;
+				z-index: 99999999;
+				
+				top:35%;
+				display: none;
+			}
+			.gameBox>h2{
+				position: fixed;
+				z-index: 9999999;
+				left: 35%;
+				top: 35%;
+				color: black;
+				transition: all ease-out 2s;
+				visibility: hidden;
+			}
+			ul{
+				position: relative;
+			}
+		  .test{
+		    	position: absolute;
+		    	width: 120px;
+		    	height: 40px;
+		    	list-style: none;
+		    	border: 2px solid white;
+		    }
+		    #circle{
+		    	position: absolute;
+		    	bottom: 0;
+		    	z-index: 10;
+		    	width: 20px;
+		    	height: 20px;
+		    	background: black;
+		    	box-shadow: 1px 1px 5px red;
+		    	border-radius: 50%;
+		    	}
+		    #block{
+		    	position: absolute;
+		    	bottom: 0;
+		    	width: 400px;
+		    	height: 20px;
+		    	background: hotpink;
+		    	border-radius: 10px;
+		    }
+		    .gameMess{
+		    	height: 600px;
+		    	background: pink;
+				float: left;
+		    	width: 130px;
+		    }
+		    .gameMess>div{
+		    	height: 40px;
+		    	line-height: 40px;
+		    	/*font-size: 40px;*/
+		    	text-align: center;
+		    }
+		</style>
+	</head>
+
+	<body>
+		<div class="gameBox">
+			<ul></ul>
+			<div id="circle"></div>
+			<div id="block"></div>
+			<h1>Game Over!</h1>
+			<h2>恭喜发财</h2>
+		</div>
+		<div class="gameMess">
+			<div class="grades"><h3 align="center">游戏得分</h3></div>
+			<div class="gradesShow" style="background: red;font-size: 30px;"></div>
+			<div><h3 align="center">时间计时</h3></div>
+			<div class="timeShow"style="background: red;font-size: 30px;"></div>
+			<div><h3 align="center">游戏模式</h3></div>
+			<div class="gameModal"style="background: red;font-size: 30px;">
+				<button class="normal">正常模式</button>
+				<button class="drop">下落模式</button>
+			</div>
+			<div><h3 align="center">游戏难度</h3></div>
+			<div class="gamebd"style="background: red;font-size: 30px;">
+				<button class="bad" >困难</button>
+				<button class="ok" >适中</button>
+				<button class="yes" >容易</button>
+			</div>
+			<div><h3 align="center">游戏状态</h3></div>
+			<div class="gameState" style="background: red;font-size: 30px;">---进行中</div>
+			
+			<div><h3 align="center">游戏是否启动</h3></div>
+			<div class="gameStart">
+				<button  style="width: 100px;height:100px;border-radius: 50%;font-size: 36px;outline: 0;border: 0;">start</button>
+			</div>
+			
+		</div>
+	</body>
+</html>
+<script>
+	/*setTimeout(function(){
+		   window.close()
+	},5000)*/
+	window.onload=function(){
+	    var index=0;//方块下落速度
+	    var squareTime=null;//ul向下移动定时器
+	   
+		var ballTime01=null;//小球定时器
+		var countTime05=null;//倒计时定时器
+		var Time=30;//倒计时时间
+		
+		
+		var gameOverObj=document.querySelector(".gameBox>h1");//获取分数对象
+		var gameMoneyObj=document.querySelector(".gameBox>h2");//获取倒计时对象
+		var gameState=document.querySelector(".gameState");//获取游戏状态对象
+		var gameStart=document.querySelector(".gameStart>button");//获取游戏启动对象
+		var ul=document.querySelector("ul");//获取ul对象
+        var list=document.getElementsByTagName("li");//获取所有的li元素
+        
+		function ranDomColor(){//产生随机颜色
+			 return Math.round(Math.random()*255)
+		}
+		function addTop(){//作用是使ul整体下移
+			index+=10;
+		    ul.style.top=index+"px"
+		
+		}
+	
+		function createLi(row,col){//创建li元素
+		 	for(var i=0;i<row;i++){
+		 		 for(var j=0;j<col;j++){
+		 		 	  var li=document.createElement("li");
+		 		 	      li.style.left=j*120+"px";
+		 		 	      li.style.top=i*40+"px";
+		 		 	      li.className="test";
+		 		 	      if(Math.round(Math.random()*col)%6==0){
+		 		 	      	  li.style.backgroundColor="black"
+		 		 	      }else if(Math.round(Math.random()*col)%9==0){
+		 		 	      	  li.style.backgroundColor="red"
+		 		 	      	
+		 		 	      }else{
+		 		 	      	li.style.backgroundColor="rgb("+ranDomColor()+","+ranDomColor()+","+ranDomColor()+")";
+		 		 	      	
+		 		 	      }
+		 		 	   document.querySelector("ul").appendChild(li)
+		 		 }
+		 	} 
+		 }
+		  createLi(8,10);//生成li元素
+		  function gamesCircle(){//初始化相关数据
+		  	  this.ballCircle=document.getElementById("circle");//小球对象
+		  	  this.block=document.getElementById("block");//挡板对象
+		  	  this.fx=1;//1代表从左向右
+		  	  this.fy=0;//从下向上
+		  	  this.Xpos=0;//小球距离左边的位置
+		  	  this.Ypos=580;//小球距离上边的位置
+		  	  this.speed=20;//小球运动的速度
+		  	  this.gameGrade=0;//游戏得分
+		  	  this.blockX=0;//挡板距离左边的位置
+		  	  this.list=document.getElementsByTagName("li");//获取到所有方块
+		  	  
+		  }
+		  gamesCircle.prototype.ballMOve=function(){
+//		  	console.log(ballTime)
+		  	  this.ballCircle.style.left=this.Xpos+"px";//不断改变小球的水平位置
+		  	  this.ballCircle.style.top=this.Ypos+"px";//不断改变小球的上下位置
+		  	   if(this.fx==1){//当小球从左向右移动时
+		  	   	  this.Xpos+=this.speed;//小球距离左边的位置越来越远
+		  	   }else{//当小球从右向左运动时
+		  	   	   this.Xpos-=this.speed;//小球距离左边的位置不断减少
+		  	   }
+		  	   if(this.Xpos+this.ballCircle.offsetWidth>1200){//当小球运动到最右边时
+		  	   	   this.Xpos=1200-this.ballCircle.offsetWidth;
+		  	   	   this.fx=0;//改变小球的运动方向
+		  	   }
+		  	   if(this.Xpos<0){//当小球运动到最左边时
+		  	   	    this.Xpos=0;
+		  	   	    this.fx=1;//改变小球的运动方向
+		  	   }
+		  	   if(this.fy==0){//小球向上运动时
+		  	   	  this.Ypos-=this.speed;//小球距离上边的位置越来越小
+		  	   }else{//当小球向下运动时
+		  	   	   this.Ypos+=this.speed;
+			  	   if(this.Xpos>this.blockX && this.Xpos+this.ballCircle.offsetWidth<this.blockX+this.block.offsetWidth){
+			  	   	//当小球下移时，如果位置在挡板的区间之内
+			  	   			if(this.Ypos+this.ballCircle.offsetHeight+this.block.offsetHeight>600){
+			  	   				//并且高度已经超过挡板就要返回
+			  	   				this.fy=0;
+			  	   				this.Ypos=600-this.ballCircle.offsetHeight-this.block.offsetHeight;
+			  	   	  		 }
+			  	   }else{//如果不在挡板区间之内
+			  	   	        if(this.Ypos+this.ballCircle.offsetHeight>600){
+			  	   	        	//并且高度超过了最底部就要返回，这个时候游戏失败
+			  	   				this.Ypos=600-this.ballCircle.offsetHeight;
+			  	   				this.fy=0;
+			  	   				clearInterval(squareTime)
+			  	   				clearInterval(ballTime01);
+		   	       	            clearInterval(countTime05);
+		   	       	            gameOverObj.style.display="block"
+		   	       	            gameState.innerText="over"
+			  	   	  		 }
+			  	   	
+		  	  	    }
+		  	   	   
+		  	   }
+		  	   if(this.Ypos<0){//当小球向上移动时，如果超过上边界则要返回
+		  	   	    this.Ypos=0;
+		  	   	    this.fy=1;
+		  	   }
+		  	   if(this.Ypos+this.ballCircle.offsetHeight>600){//当小球向下移动时，超过最底部就要返回
+		  	   	    this.Ypos=600-this.ballCircle.offsetHeight;
+		  	   	    this.fy=0;
+		  	   	    clearInterval(squareTime)
+		  	   	    clearInterval(ballTime01);
+		   	       	clearInterval(countTime05);
+		   	       	gameOverObj.style.display="block"
+		   	       	gameState.innerText="over"
+		  	   }
+		  }
+		   gamesCircle.prototype.LiInit=function(){//排列li元素并设置每一个li元素的top,left
+		   	     for(var i=0;i<this.list.length;i++){
+		 		  if(this.Xpos+this.ballCircle.offsetWidth>this.list[i].offsetLeft && this.Xpos<this.list[i].offsetLeft+this.list[i].offsetWidth){
+		 		  	  if(this.Ypos<this.list[i].offsetTop+this.list[i].offsetHeight+ul.offsetTop){
+		 		  	  	   if(this.list[i].style.backgroundColor=="black"){
+		 		  	  	   		this.gameGrade+=50;
+		 		  	  	   }else if(this.list[i].style.backgroundColor=="red"){
+		 		  	  	   	    this.gameGrade+=100;
+		 		  	  	   	    gameMoneyObj.style.visibility="visible";
+		 		  	  	   	    gameMoneyObj.style.top="80%"
+		 		  	  	   	    setTimeout(function(){
+		 		  	  	   	    	gameMoneyObj.style.visibility="hidden";
+		 		  	  	   	    	 
+		 		  	  	   	    	gameMoneyObj.style.top="35%"
+		 		  	  	   	    },1000)
+		 		  	  	   }else{
+		 		  	  	   	    this.gameGrade+=1;
+		 		  	  	   }
+		 		  	  	   this.list[i].style.display="none"
+		 		  	  	   this.fy=1;
+		 		  	  	  document.querySelector(".gradesShow").innerText=this.gameGrade+"分";
+		 		  	  }
+		 		  }
+		 	}
+		   }
+		 
+        document.onkeydown=function(e){//通过键盘控制挡板的左移或者右移动
+        	 if(e.keyCode==39){
+        	 	  circle.blockX+=100;
+        	 	  if(circle.blockX+circle.block.offsetWidth>1200){
+        	 	  	circle.blockX=1200-circle.block.offsetWidth
+        	 	  }
+        	 }else if(e.keyCode==37){
+        	 	   circle.blockX-=100;
+        	 	   if(circle.blockX<0){
+        	 	  	circle.blockX=0;
+        	 	  }
+        	 }
+        	 document.getElementById("block").style.left=circle.blockX+"px"
+        }
+        document.querySelector(".gamebd").onclick=function(e){//游戏难度控制
+        	clearInterval(ballTime01)
+	        	if(e.target.className=="bad"){
+	        		if(gameState.innerText!="over"){
+				        	
+	        			 ballTime01=setInterval(function(){
+					    	  circle.LiInit()
+					      	  circle.ballMOve()
+					      },30)
+	        			
+	        		}
+	        	}else if(e.target.className=="ok"){
+	        		  if(gameState.innerText!=="over"){
+				        	 ballTime01=setInterval(function(){
+					    	  circle.LiInit()
+					      	  circle.ballMOve()
+					      },50)
+	        		  }
+	        	}else{
+	        			if(gameState.innerText!=="over"){
+					        	 ballTime01=setInterval(function(){
+						    	  circle.LiInit()
+						      	  circle.ballMOve()
+						      },500)
+	        			}
+				 
+	        	}
+        }
+        document.querySelector(".drop").onclick=function(){//ul下落控制
+        	if(gameState.innerText!=="over"){
+	          	squareTime=setInterval(function(){
+					   addTop()
+					   for(var i=0;i<list.length;i++){
+					   	   if(list[i].offsetHeight+list[i].offsetTop+index>520){
+					   	       index=560-list[i].offsetTop-list[i].offsetHeight;
+					   	       clearInterval(squareTime)
+					   	         clearInterval(ballTime01);
+					   	       	  clearInterval(countTime05);
+					   	       	  gameOverObj.style.display="block"
+					   	       	  gameState.innerText="over"
+					   	   }
+					   }
+				},1000)
+        		
+        	}
+          }
+        document.querySelector(".normal").onclick=function(){//ul暂停控制
+        	if(gameState.innerText!="over"){
+        		
+        		clearInterval(squareTime)
+        	}
+        }
+      	var circle=new gamesCircle();//初始化小球相关数据
+      gameStart.onclick=function(){
+      	if(gameState.innerText!="over"){
+      		gameStart.disabled="disabled"
+      		  ballTime01=setInterval(function(){
+      		   	  circle.LiInit();//创建li初始化li
+      		      circle.ballMOve();//小球开始运动
+      		     },100)
+      		  countTime05=setInterval(function(){//游戏开始计时
+      		  	       Time--;
+      		  	       if(Time==0){
+      		  	       	  clearInterval(squareTime)
+      		  	       	   clearInterval(ballTime01);
+      		  	       	  clearInterval(countTime05);
+      		  	       	  gameOverObj.style.display="block"
+      		  	       	  gameState.innerText="over"
+
+      		  	       }
+      		  	       document.querySelector(".timeShow").innerText=Time+"S";
+      		  },1000)
+      	}
+      }
+		
+	}
+	
+	
+</script>
