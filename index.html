@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+	</head>
+	<body>
+		<table class="table table-condensed" style="width: 300px;margin: 0 auto;">
+			<tr>
+				<td><input type="text" id="userName" placeholder="请输入姓名"/></td>
+				<td><input type="number" id="userAge" placeholder="请输入年龄"/></td>
+				<td><input type="nuber" id="userPor" placeholder="请输入电话号码"/></td>
+				<td><a href="#" class="btn btn-success" id="add">添加</a></td>
+			</tr>
+		</table>
+		<fieldset>
+			<legend>VIP会员信息</legend>
+			
+		</fieldset>
+	</body>
+</html>
+<script type="text/template" id="table">
+	<table class="table table-striped" style="width: 1300px; margin: 0 auto;" id="test">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>姓名</th>
+				<th>年龄</th>
+				<th>电话号码</th>
+				<th>会员账号</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			%{
+				for(var i=0;i<list.length;i++){
+					var u=list[i];
+			}%
+			<tr>
+				<td>{=u.userId}</td>
+				<td>{=u.userName}</td>
+				<td>{=u.userAge}</td>
+				<td>{=u.userPor}</td>
+				<td>M_{=u.userPor}</td>
+				<td><a href="#" class="btn btn-danger" id={=u.userId}>删除</a></td>
+			</tr>
+			%{
+				}
+			}%
+		</tbody>
+		</table>
+</script>
+<script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/require.js" type="text/javascript" data-main="/require/js/req.js" charset="utf-8"></script>
