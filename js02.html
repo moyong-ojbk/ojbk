@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			body{
+				background: #F5DEB3;
+			}
+			.box{
+				width: 1205px;
+				height: 700px;
+				position: relative;
+				border:1px solid red;
+				margin: 0 auto;
+				background: black;
+				background-size: 100% 100%;
+			}
+			.box>p{
+				position: absolute;
+				font-size:60px;
+				width:100px;
+				height:60px;
+				top:400px;
+				left:550px;
+				display: block;
+				text-align: center;
+				color: red;
+			}
+			.box>.cil{
+				width: 40px;
+				height: 40px;
+				background: red;
+				top:640px;
+				position: absolute;
+				border-radius: 50%;
+			}
+			.box>.box1{
+				width: 400px;
+				height: 20px;
+				background: blue;
+				position: absolute;
+				bottom: 0;
+			}
+			#boxx{
+				width: 450px;
+				height: 40px;
+				margin: 10px auto;
+				/*margin-right: 400px;*/
+				font-size: 25px;
+				
+			}
+			#boxx>span{
+				display:inline-block;
+				width: 100px;
+				height: 40px;
+				color: green;
+			}
+			ul{
+				position: relative;
+				top:0px;
+			}
+			#bss{
+				width: 650px;
+				height: 30px;
+				margin: 10px auto;
+				/*margin-left:360px ;*/
+			}
+			#bss>button{
+				width: 80px;
+				height: 30px;
+				
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box">
+			<ul></ul>
+			<div class="cil"></div>
+			<div class="box1"></div>
+			<p></p>
+		</div>
+		<div id="bss">
+			<button class="but">开始</button>
+			<button class="but2">暂停</button>
+			<button class="but3">继续</button>
+			<button onclick="speed(0)">普通</button>
+			<button onclick="speed(1)">中级</button>
+			<button onclick="speed(2)">高级</button>
+			<button class="but1">下落模式</button>
+		</div>
+		<div id="boxx">
+			分数为：<span class="spp"></span>
+			时间剩余：<span id="dd"></span><br/>
+		</div>
+	</body>
+</html>
+<script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	var c=0;
+	var e=0;
+	var d=0;
+	var f=0;
+	document.querySelector(".but2").onclick=function(){
+		a=3;
+		f=1;
+		clearInterval(time2);
+		clearInterval(butTime);
+	}
+	document.querySelector(".but3").onclick=function(){
+		if(e==1){
+		if(f==1){
+		a=0;
+		f=0;
+		clearInterval(time2);
+		time1=document.querySelector("#dd").innerText;
+		time2=setInterval(function(){
+				time1--;
+				document.querySelector("#dd").innerText=time1;
+				if(time1<=0){
+					clearInterval(time2);
+				}
+			},1000)
+		kais();
+		if(c==1){
+			butTime=setInterval(function(){
+				butTop++;
+				if(butTop>700-60-250){
+					butTop=700-60-250;
+					clearInterval(butTime);
+					a=1;
+				}
+				Ul.style.top=butTop+"px";
+			},50);
+		}
+		}}
+	}
+	var cntt=0;
+	var but1=document.querySelector(".but1");
+	var Ul=document.querySelector("ul");
+	var butTop=0;
+	var butTime=null;
+	but1.onclick=function(){
+		if(e==1){
+		c=1;
+		butTime=setInterval(function(){
+			butTop++;
+			if(butTop>700-60-250){
+				butTop=700-60-250;
+				clearInterval(butTime);
+				a=1;
+			}
+			Ul.style.top=butTop+"px";
+		},50);
+		this.style.display="none";
+		}
+		
+	}
+	function RGB1(arg){
+		return Math.round(Math.random()*arg);
+	}
+	function createLi1(rows,cols){
+		for (var i=0;i<rows;i++) {
+			for (var j=0;j<cols;j++) {
+				var li=document.createElement("li");
+				li.style.listStyle="none";
+				li.style.width="120px";
+				li.style.height="60px";
+				li.style.position="absolute";
+				li.style.left=j*120+"px";
+				li.style.top=i*60+"px";
+				li.style.border="2px solid white";
+				if(RGB1(10)>7){
+					li.style.backgroundColor="red";
+				}else if(RGB1(10)>8){
+					li.style.backgroundColor="green";
+				}else{
+					li.style.backgroundColor="rgb("+RGB1(255)+","+RGB1(255)+","+RGB1(255)+")";
+				}
+				document.querySelector("ul").appendChild(li);
+				d++;
+			}
+		}
+	}
+	createLi1(4,10);
+//	console.log(1)
+	//console.log(document.querySelector("ul").offsetHeight);
+	var block=document.querySelector(".box1");
+	var blockXpos=0;
+	function createIndex(){
+		this.xon=1;
+		this.Yon=1;
+		this.Xpos=0;
+		this.speed=5;
+		this.Yos=640;
+		this.ball=document.querySelector(".cil");
+		this.box=document.querySelector(".box");
+		this.listLi=document.querySelectorAll("li");
+	}
+	var sx=0;
+	createIndex.prototype.mov=function(){
+		this.ball.style.top=this.Yos+"px";
+		if(this.Yon==1){
+			this.Yos+=this.speed;
+			if(blockXpos<this.Xpos && this.Xpos<blockXpos+block.offsetWidth){
+				if(this.Yos+this.ball.offsetHeight+block.offsetHeight>this.box.offsetHeight){
+					this.Yon=0;
+					this.Yos=this.box.offsetHeight-block.offsetHeight-this.ball.offsetHeight;
+				}
+			}
+		}else{
+			this.Yos-=this.speed;
+		}
+		if(cntt==0){
+			a=2;
+		}
+		if(this.Yos+this.ball.offsetHeight>this.box.offsetHeight || time1==0){
+			a=1;
+			this.Yos=this.box.offsetHeight-this.ball.offsetHeight;
+			this.Xpos=this.ball.style.left;
+		}
+		for (var i=0;i<this.listLi.length;i++) {
+			if(this.Xpos>this.listLi[i].offsetLeft && this.Xpos+this.ball.offsetWidth<this.listLi[i].offsetLeft+this.listLi[i].offsetWidth){
+				if(this.Yos<this.listLi[i].offsetHeight+this.listLi[i].offsetTop+Ul.offsetTop){
+					this.Yon=1;
+					this.Yos=this.listLi[i].offsetHeight+this.listLi[i].offsetTop+Ul.offsetTop;
+					if(this.listLi[i].style.backgroundColor=="red"){
+						sx+=300;
+						document.querySelector("p").innerText="+300!";
+					}else if(this.listLi[i].style.backgroundColor=="green"){
+						sx+=500;
+						document.querySelector("p").innerText="+500";
+					}else{
+						sx+=100;
+						document.querySelector("p").innerText="+100";
+					}
+					this.listLi[i].style.display="none";
+					cntt--;
+					document.querySelector("#boxx>.spp").innerText=sx;
+					if(document.querySelector("p").innerText!=""){
+						setTimeout(function(){
+							document.querySelector("p").innerText="";
+							
+						},2000)
+					}
+					
+					
+				}
+			}
+		}
+		if(this.Yos<0){
+			this.Yos=0;
+			this.Yon=1;
+		}
+		this.ball.style.left=this.Xpos+"px";
+		if(this.xon==1){
+			this.Xpos+=this.speed;
+		}else{
+			this.Xpos-=this.speed;
+		}
+		if(this.Xpos+this.ball.offsetWidth>this.box.offsetWidth){
+			this.xon=0;
+			this.Xpos=this.box.offsetWidth-this.ball.offsetWidth;
+		}
+		if(this.Xpos<0){
+			this.xon=1;
+			this.Xpos=0;
+		}
+	}
+	var spee=5;
+	function speed(spe){
+		if(spe==1){
+			spee=7;
+		}else if(spe==2){
+			spee=10;
+		}else{
+			spee=5;
+		}
+	}
+	var obj=new createIndex();
+	var a=0;
+	var time1=120;
+	var time2=0;
+	document.querySelector("#dd").innerText=time1;
+	document.querySelector(".but").onclick=function(){
+		a=0;
+		e=1;
+		c=0;
+		f=0;
+		butTop=0;
+		Ul.style.top="0px";
+		document.querySelector("p").style.fontSize="60px";
+		for (var i=0;i<obj.listLi.length;i++) {
+			obj.listLi[i].style.display="block";
+		}
+		obj.Xpos=0;
+		obj.Yon=0;
+		var sub=3;
+		time1=120;
+		if(time2!=0){
+			time2=0;
+		}
+		cntt=d;
+		setTimeout(function(){
+			time2=setInterval(function(){
+				time1--;
+				document.querySelector("#dd").innerText=time1;
+				if(time1<=0){
+					clearInterval(time2);
+				}
+			},1000)	
+		},4000);
+		document.querySelector("#boxx>.spp").innerText="";
+		sx=0;
+		block.style.left="0px";
+		obj.ball.style.top="640px";
+		obj.ball.style.left="0px";
+		blockXpos=0;
+		var time=setInterval(function(){
+			if(sub==0){
+				document.querySelector("p").innerText="go!";
+			}else{
+				document.querySelector("p").innerText=sub;
+			}
+			if(sub<0){
+				clearInterval(time);
+				document.querySelector("p").innerText="";
+				setTimeout("kais()",0);
+			}
+			sub--;
+		},1000);
+		this.style.display="none";
+	}
+	var xx=0;
+	function kais(){
+		requestAnimationFrame(function(){
+			obj.mov();
+			obj.speed=spee;
+			if(a==0){
+				requestAnimationFrame(arguments.callee);
+			}else if(a==2){
+				document.querySelector("p").style.fontSize="60px";
+				document.querySelector("p").innerText="你赢了";
+				clearInterval(time2);
+				clearInterval(butTime);
+				c=0;
+				e=0;
+				document.querySelector(".but").style.display="inline-block";
+				but1.style.display="inline-block";
+			}else if(a==1){
+				document.querySelector("p").style.fontSize="60px";
+				document.querySelector("p").innerText="over";
+				clearInterval(time2);
+				clearInterval(butTime);
+				e=0;
+				document.querySelector(".but").style.display="inline-block";
+				but1.style.display="inline-block";
+				return;
+			}
+		});
+		
+	}
+	document.onkeydown=function(e){
+		if(e.keyCode==39){
+			blockXpos+=20;
+			if(blockXpos+block.offsetWidth>obj.box.offsetWidth){
+				blockXpos=obj.box.offsetWidth-block.offsetWidth;
+			}
+		}else if(e.keyCode==37){
+			blockXpos-=20;
+			if(blockXpos<0){
+				blockXpos=0;
+			}
+		}
+		block.style.left=blockXpos+"px";
+	}
+	
+
+</script>
